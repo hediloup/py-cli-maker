@@ -1243,7 +1243,7 @@ Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
 
 ## 👤 Auteur
 
-**Hedi DHIB** - hedi@dhib.com
+**Hedi DHIB** - hedi.dhib@gmail.com
 
 ## Remerciements
 
