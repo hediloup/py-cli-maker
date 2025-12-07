@@ -2,6 +2,9 @@ from pathlib import Path
 
 import click
 
+from py_cli_maker.generators.ddd_domaine_generator import (
+    generate_ddd_domaine_structure,
+)
 from py_cli_maker.generators.domaine_generator import (
     generate_domaine_structure,
 )
@@ -196,7 +199,9 @@ def make_url(
     "-l",
     "license_type",
     default="MIT",
-    type=click.Choice(["MIT", "Apache-2.0", "GPL-3.0", "BSD-3-Clause"], case_sensitive=False),
+    type=click.Choice(
+        ["MIT", "Apache-2.0", "GPL-3.0", "BSD-3-Clause"], case_sensitive=False
+    ),
     help="Type de licence",
     prompt="Type de licence",
 )
@@ -230,7 +235,10 @@ def make_url(
 @click.option(
     "--dev-dependencies",
     default=None,
-    help="Dépendances de développement séparées par des virgules (ex: pytest>=7.0.0,black>=23.0.0)",
+    help=(
+        "Dépendances de développement séparées par des virgules "
+        "(ex: pytest>=7.0.0,black>=23.0.0)"
+    ),
 )
 @click.option(
     "--github-username",
@@ -322,25 +330,21 @@ def make_package(
         )
         click.echo("\n📁 Structure créée :")
         click.echo(f"  {package_dir}/")
-        click.echo(f"    ├── pyproject.toml")
-        click.echo(f"    ├── README.md")
-        click.echo(f"    ├── LICENSE")
-        click.echo(f"    ├── .gitignore")
+        click.echo("    ├── pyproject.toml")
+        click.echo("    ├── README.md")
+        click.echo("    ├── LICENSE")
+        click.echo("    ├── .gitignore")
         if include_manifest:
-            click.echo(f"    ├── MANIFEST.in")
+            click.echo("    ├── MANIFEST.in")
         if include_makefile:
-            click.echo(f"    ├── Makefile")
+            click.echo("    ├── Makefile")
         click.echo(f"    ├── {package_name}/")
-        click.echo(f"    │   └── __init__.py")
-        click.echo(f"    └── tests/")
-        click.echo(f"        ├── __init__.py")
+        click.echo("    │   └── __init__.py")
+        click.echo("    └── tests/")
+        click.echo("        ├── __init__.py")
         click.echo(f"        └── test_{package_name}.py")
 
-        click.echo(
-            click.style(
-                "\n💡 Prochaines étapes :", fg="yellow"
-            )
-        )
+        click.echo(click.style("\n💡 Prochaines étapes :", fg="yellow"))
         click.echo(f"  1. cd {package_dir}")
         click.echo("  2. git init")
         click.echo("  3. git add .")
@@ -456,34 +460,179 @@ def make_domaine(
         )
         click.echo("\n📁 Structure créée :")
         click.echo(f"  {app_dir}/")
-        click.echo(f"    ├── __init__.py")
-        click.echo(f"    ├── apps.py")
-        click.echo(f"    ├── admin.py")
-        click.echo(f"    ├── models.py")
-        click.echo(f"    ├── views.py")
-        click.echo(f"    ├── urls.py")
-        click.echo(f"    ├── forms.py")
+        click.echo("    ├── __init__.py")
+        click.echo("    ├── apps.py")
+        click.echo("    ├── admin.py")
+        click.echo("    ├── models.py")
+        click.echo("    ├── views.py")
+        click.echo("    ├── urls.py")
+        click.echo("    ├── forms.py")
         if include_services:
-            click.echo(f"    ├── services.py")
+            click.echo("    ├── services.py")
         if include_selectors:
-            click.echo(f"    ├── selectors.py")
-        click.echo(f"    └── templates/")
+            click.echo("    ├── selectors.py")
+        click.echo("    └── templates/")
         click.echo(f"        └── {app_name}/")
-        click.echo(f"            ├── liste.html")
-        click.echo(f"            ├── detail.html")
-        click.echo(f"            └── formulaire.html")
+        click.echo("            ├── liste.html")
+        click.echo("            ├── detail.html")
+        click.echo("            └── formulaire.html")
+
+        click.echo(click.style("\n💡 Prochaines étapes :", fg="yellow"))
+        click.echo(f"  1. Ajoutez '{app_name}' à INSTALLED_APPS dans settings.py")
+        click.echo("  2. Incluez les URLs dans votre urls.py principal:")
+        click.echo("     from django.urls import include, path")
+        click.echo(f"     path('{app_name}/', include('{app_name}.urls')),")
+        click.echo(
+            f"  3. Exécutez les migrations: python manage.py makemigrations {app_name}"
+        )
+        click.echo("  4. Appliquez les migrations: python manage.py migrate")
+
+    except ValueError as e:
+        click.echo(click.style(f"❌ Erreur de validation : {e}", fg="red"), err=True)
+        raise click.Abort()
+    except FileExistsError as e:
+        click.echo(click.style(f"❌ Erreur : {e}", fg="red"), err=True)
+        raise click.Abort()
+    except OSError as e:
+        click.echo(click.style(f"❌ Erreur d'écriture : {e}", fg="red"), err=True)
+        raise click.Abort()
+    except Exception as e:
+        click.echo(click.style(f"❌ Erreur inattendue : {e}", fg="red"), err=True)
+        raise click.Abort()
+
+
+@cli.command("make:domaine-ddd")
+@click.option(
+    "--app-name",
+    "-a",
+    default=None,
+    help="Nom de l'app Django (ex: pratique)",
+    prompt="Nom de l'app Django (ex: pratique)",
+)
+@click.option(
+    "--model-name",
+    "-m",
+    default=None,
+    help="Nom du modèle principal (ex: Pratique)",
+)
+@click.option(
+    "--output-dir",
+    "-o",
+    default=".",
+    help="Dossier de sortie où créer l'app",
+    prompt="Dossier de sortie",
+)
+@click.option(
+    "--include-serializers/--no-serializers",
+    default=True,
+    help="Inclure serializers.py pour DRF (recommandé)",
+)
+@click.option(
+    "--description",
+    "-d",
+    default=None,
+    help="Description du domaine",
+)
+def make_domaine_ddd(
+    app_name,
+    model_name,
+    output_dir,
+    include_serializers,
+    description,
+):
+    """
+    Génère une structure complète de domaine Django selon les principes DDD
+    (Domain-Driven Design) light.
+
+    Crée tous les fichiers recommandés pour un domaine Django organisé en couches :
+    - domain/models.py (entités métier, logique métier pure)
+    - domain/services.py (règles métier complexes)
+    - domain/value_objects.py (objets de valeur immutables)
+    - infrastructure/repositories.py (accès DB, querysets personnalisés)
+    - presentation/views.py (Django views)
+    - presentation/forms.py (formulaires)
+    - presentation/serializers.py (DRF serializers, optionnel)
+    - presentation/urls.py (routes)
+    - presentation/templates/pratique/ (templates HTML)
+    - tests/ (test_models.py, test_services.py, test_views.py)
+
+    Exemple d'utilisation:
+        py-cli make:domaine-ddd --app-name pratique --model-name Pratique
+    """
+    try:
+        # Validation du dossier de sortie
+        output_path = Path(output_dir)
+        if not output_path.is_absolute():
+            output_path = Path.cwd() / output_path
+
+        # Génération automatique du nom de modèle si non fourni
+        if model_name is None:
+            # Utilise l'app_name comme base et le convertit en PascalCase
+            model_name = app_name.replace("_", " ").title().replace(" ", "")
+
+        # Si description n'est pas fournie, on demande interactivement
+        if description is None:
+            description = click.prompt(
+                "Description du domaine (optionnel, Entrée pour ignorer)",
+                default="",
+                show_default=False,
+            )
+            if not description.strip():
+                description = None
+
+        app_dir = generate_ddd_domaine_structure(
+            app_name=app_name,
+            model_name=model_name,
+            output_dir=str(output_path),
+            include_serializers=include_serializers,
+            description=description,
+        )
 
         click.echo(
-            click.style(
-                "\n💡 Prochaines étapes :", fg="yellow"
-            )
+            click.style(f"✅ Domaine DDD créé avec succès dans : {app_dir}", fg="green")
         )
+        click.echo("\n📁 Structure créée :")
+        click.echo(f"  {app_dir}/")
+        click.echo("    ├── __init__.py")
+        click.echo("    ├── apps.py")
+        click.echo("    ├── admin.py")
+        click.echo("    ├── domain/")
+        click.echo("    │   ├── models.py")
+        click.echo("    │   ├── services.py")
+        click.echo("    │   └── value_objects.py")
+        click.echo("    ├── infrastructure/")
+        click.echo("    │   └── repositories.py")
+        click.echo("    ├── presentation/")
+        click.echo("    │   ├── views.py")
+        click.echo("    │   ├── forms.py")
+        if include_serializers:
+            click.echo("    │   ├── serializers.py")
+        click.echo("    │   └── urls.py")
+        click.echo(f"    ├── templates/{app_name}/")
+        click.echo("    │   ├── liste.html")
+        click.echo("    │   ├── detail.html")
+        click.echo("    │   └── formulaire.html")
+        click.echo("    └── tests/")
+        click.echo("        ├── test_models.py")
+        click.echo("        ├── test_services.py")
+        click.echo("        └── test_views.py")
+
+        click.echo(click.style("\n💡 Prochaines étapes :", fg="yellow"))
         click.echo(f"  1. Ajoutez '{app_name}' à INSTALLED_APPS dans settings.py")
-        click.echo(f"  2. Incluez les URLs dans votre urls.py principal:")
-        click.echo(f"     from django.urls import include, path")
-        click.echo(f"     path('{app_name}/', include('{app_name}.urls')),")
-        click.echo(f"  3. Exécutez les migrations: python manage.py makemigrations {app_name}")
-        click.echo(f"  4. Appliquez les migrations: python manage.py migrate")
+        click.echo("  2. Incluez les URLs dans votre urls.py principal:")
+        click.echo("     from django.urls import include, path")
+        click.echo(
+            f"     path('{app_name}/', include('{app_name}.presentation.urls')),"
+        )
+        click.echo(
+            f"  3. Exécutez les migrations: python manage.py makemigrations {app_name}"
+        )
+        click.echo("  4. Appliquez les migrations: python manage.py migrate")
+        if include_serializers:
+            click.echo(
+                "  5. Assurez-vous d'avoir 'rest_framework' dans INSTALLED_APPS "
+                "pour les serializers"
+            )
 
     except ValueError as e:
         click.echo(click.style(f"❌ Erreur de validation : {e}", fg="red"), err=True)

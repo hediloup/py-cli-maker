@@ -1,3 +1,6 @@
+from py_cli_maker.generators.ddd_domaine_generator import (
+    generate_ddd_domaine_structure,
+)
 from py_cli_maker.generators.domaine_generator import (
     generate_domaine_structure,
 )
@@ -9,8 +12,8 @@ from py_cli_maker.generators.package_generator import (
 )
 
 __all__ = [
+    "generate_ddd_domaine_structure",
     "generate_domaine_structure",
     "generate_ninja_route_file",
     "generate_package_structure",
 ]
-

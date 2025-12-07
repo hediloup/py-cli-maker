@@ -219,8 +219,8 @@ class TestGenerateDomaineStructure:
         assert 'app_name = "pratique"' in urls_content
         assert "PratiqueListView" in urls_content
         assert "PratiqueDetailView" in urls_content
-        assert "name=\"liste\"" in urls_content
-        assert "name=\"detail\"" in urls_content
+        assert 'name="liste"' in urls_content
+        assert 'name="detail"' in urls_content
 
     def test_generate_forms_content(self):
         """Test du contenu des formulaires générés."""
@@ -352,4 +352,3 @@ class TestGenerateDomaineStructure:
         assert "def obtenir_pratique_par_id" in selectors_content
         assert "def lister_pratiques" in selectors_content
         assert "def filtrer_pratiques" in selectors_content
-

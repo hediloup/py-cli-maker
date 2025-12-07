@@ -8,10 +8,10 @@ from typing import Optional
 def _sanitize_package_name(name: str) -> str:
     """
     Nettoie et valide un nom de package Python.
-    
+
     Args:
         name: Nom du package à nettoyer
-        
+
     Returns:
         Nom de package valide avec underscores
     """
@@ -32,10 +32,10 @@ def _sanitize_package_name(name: str) -> str:
 def _sanitize_project_name(name: str) -> str:
     """
     Nettoie un nom de projet (peut contenir des tirets).
-    
+
     Args:
         name: Nom du projet
-        
+
     Returns:
         Nom de projet nettoyé
     """
@@ -52,13 +52,13 @@ def _sanitize_project_name(name: str) -> str:
 def _validate_email(email: str) -> str:
     """
     Valide un email basique.
-    
+
     Args:
         email: Email à valider
-        
+
     Returns:
         Email validé
-        
+
     Raises:
         ValueError: Si l'email est invalide
     """
@@ -71,13 +71,13 @@ def _validate_email(email: str) -> str:
 def _validate_python_version(version: str) -> str:
     """
     Valide une version Python (ex: 3.8, 3.9).
-    
+
     Args:
         version: Version Python
-        
+
     Returns:
         Version validée
-        
+
     Raises:
         ValueError: Si la version est invalide
     """
@@ -108,7 +108,7 @@ def generate_package_structure(
 ) -> str:
     """
     Génère une structure complète de package Python selon les best practices.
-    
+
     Args:
         project_name: Nom du projet (avec tirets, ex: my-package)
         package_name: Nom du package Python (avec underscores, ex: my_package)
@@ -126,10 +126,10 @@ def generate_package_structure(
         dev_dependencies: Liste des dépendances de développement (optionnel)
         github_username: Nom d'utilisateur GitHub (optionnel)
         homepage_url: URL de la page d'accueil (optionnel)
-        
+
     Returns:
         Chemin du dossier du package créé
-        
+
     Raises:
         ValueError: Si les paramètres sont invalides
         OSError: Si les fichiers ne peuvent pas être créés
@@ -139,30 +139,30 @@ def generate_package_structure(
     package_name = _sanitize_package_name(package_name)
     author_email = _validate_email(author_email)
     python_version = _validate_python_version(python_version)
-    
+
     if not description.strip():
         description = f"A Python package: {package_name}"
-    
+
     if dependencies is None:
         dependencies = []
     if dev_dependencies is None:
         dev_dependencies = ["pytest>=7.0.0", "black>=23.0.0", "ruff>=0.1.0"]
-    
+
     # Création du dossier de sortie
     output_path = Path(output_dir)
     package_dir = output_path / project_name
-    
+
     if package_dir.exists():
         raise FileExistsError(
             f"Le dossier {package_dir} existe déjà. "
             "Supprimez-le ou choisissez un autre nom de projet."
         )
-    
+
     try:
         package_dir.mkdir(parents=True, exist_ok=True)
     except OSError as e:
         raise OSError(f"Impossible de créer le dossier {package_dir}: {e}") from e
-    
+
     # Génération des fichiers
     _generate_pyproject_toml(
         package_dir,
@@ -179,23 +179,23 @@ def generate_package_structure(
         github_username,
         homepage_url,
     )
-    
+
     _generate_readme(package_dir, project_name, package_name, description, author_name)
-    
+
     _generate_license(package_dir, license_type, author_name)
-    
+
     _generate_gitignore(package_dir)
-    
+
     _generate_package_init(package_dir, package_name)
-    
+
     _generate_tests_structure(package_dir, package_name)
-    
+
     if include_manifest:
         _generate_manifest_in(package_dir, package_name)
-    
+
     if include_makefile:
         _generate_makefile(package_dir)
-    
+
     if include_setup_py:
         _generate_setup_py(
             package_dir,
@@ -206,7 +206,7 @@ def generate_package_structure(
             author_name,
             author_email,
         )
-    
+
     return str(package_dir)
 
 
@@ -233,27 +233,27 @@ def _generate_pyproject_toml(
     else:
         repo_url = homepage_url or ""
         homepage = homepage_url or ""
-    
+
     # Formatage des dépendances
     if dependencies:
         deps_str = "\n".join([f'    "{dep}",' for dep in dependencies])
         deps_section = f"dependencies = [\n{deps_str}\n]"
     else:
         deps_section = "dependencies = []"
-    
+
     if dev_dependencies:
         dev_deps_str = "\n".join([f'    "{dep}",' for dep in dev_dependencies])
         dev_deps_section = f"dev = [\n{dev_deps_str}\n]"
     else:
         dev_deps_section = "dev = []"
-    
+
     # Classifiers Python
     major, minor = python_version.split(".")
     classifiers = f"""    "Programming Language :: Python :: 3",
     "Programming Language :: Python :: {major}.{minor}",
     "License :: OSI Approved :: {license_type} License",
     "Operating System :: OS Independent","""
-    
+
     content = f"""[build-system]
 requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
@@ -281,13 +281,13 @@ keywords = ["python", "package"]
 
 [project.urls]
 """
-    
+
     if homepage:
         content += f'Homepage = "{homepage}"\n'
     if github_username:
         content += f'Repository = "{repo_url}"\n'
         content += f'Issues = "{repo_url}/issues"\n'
-    
+
     content += f"""
 [tool.setuptools]
 packages = ["{package_name}"]
@@ -318,12 +318,16 @@ warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = false
 """
-    
+
     (package_dir / "pyproject.toml").write_text(content, encoding="utf-8")
 
 
 def _generate_readme(
-    package_dir: Path, project_name: str, package_name: str, description: str, author_name: str
+    package_dir: Path,
+    project_name: str,
+    package_name: str,
+    description: str,
+    author_name: str,
 ):
     """Génère le fichier README.md."""
     content = f"""# {project_name}
@@ -398,7 +402,7 @@ Ce projet est sous licence MIT. Voir le fichier LICENSE pour plus de détails.
 def _generate_license(package_dir: Path, license_type: str, author_name: str):
     """Génère le fichier LICENSE."""
     year = "2025"
-    
+
     if license_type.upper() == "MIT":
         content = f"""MIT License
 
@@ -430,7 +434,7 @@ Copyright (c) {year} {author_name}
 
 See LICENSE file for full license text.
 """
-    
+
     (package_dir / "LICENSE").write_text(content, encoding="utf-8")
 
 
@@ -583,7 +587,7 @@ def _generate_package_init(package_dir: Path, package_name: str):
     """Génère le fichier __init__.py du package."""
     package_path = package_dir / package_name
     package_path.mkdir(exist_ok=True)
-    
+
     content = f'''"""
 {package_name} - A Python package.
 """
@@ -597,10 +601,10 @@ def _generate_tests_structure(package_dir: Path, package_name: str):
     """Génère la structure de tests."""
     tests_dir = package_dir / "tests"
     tests_dir.mkdir(exist_ok=True)
-    
+
     # __init__.py pour tests
     (tests_dir / "__init__.py").write_text("", encoding="utf-8")
-    
+
     # test_package.py exemple
     content = f'''"""Tests pour le package {package_name}."""
 
@@ -691,4 +695,3 @@ from setuptools import setup
 setup()
 '''
     (package_dir / "setup.py").write_text(content, encoding="utf-8")
-

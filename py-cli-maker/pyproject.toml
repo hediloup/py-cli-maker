@@ -39,6 +39,24 @@ dev = [
     "mypy>=1.5.0",
     "ipdb>=0.13.0",
 ]
+# Dépendances optionnelles pour utiliser le code généré
+# Ces dépendances ne sont pas nécessaires pour le générateur lui-même,
+# mais sont nécessaires pour utiliser le code généré dans un projet Django
+django = [
+    "django>=4.0.0",
+]
+django-ninja = [
+    "django-ninja>=1.0.0",
+]
+django-drf = [
+    "djangorestframework>=3.14.0",
+]
+# Toutes les dépendances Django (pour tester/utiliser tous les générateurs)
+django-all = [
+    "django>=4.0.0",
+    "django-ninja>=1.0.0",
+    "djangorestframework>=3.14.0",
+]
 
 [project.scripts]
 # Nom de la commande CLI une fois installée

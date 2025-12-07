@@ -243,7 +243,9 @@ class TestGeneratePackageStructure:
         )
 
         package_path = Path(package_dir)
-        pyproject_content = (package_path / "pyproject.toml").read_text(encoding="utf-8")
+        pyproject_content = (package_path / "pyproject.toml").read_text(
+            encoding="utf-8"
+        )
         assert "requests>=2.0.0" in pyproject_content
         assert "click>=8.0.0" in pyproject_content
 
@@ -263,7 +265,9 @@ class TestGeneratePackageStructure:
         )
 
         package_path = Path(package_dir)
-        pyproject_content = (package_path / "pyproject.toml").read_text(encoding="utf-8")
+        pyproject_content = (package_path / "pyproject.toml").read_text(
+            encoding="utf-8"
+        )
         assert "pytest>=7.0.0" in pyproject_content
         assert "black>=23.0.0" in pyproject_content
 
@@ -283,7 +287,9 @@ class TestGeneratePackageStructure:
         )
 
         package_path = Path(package_dir)
-        pyproject_content = (package_path / "pyproject.toml").read_text(encoding="utf-8")
+        pyproject_content = (package_path / "pyproject.toml").read_text(
+            encoding="utf-8"
+        )
         assert "github.com/testuser/test-package" in pyproject_content
 
     def test_generate_package_file_exists_error(self):
@@ -350,7 +356,9 @@ class TestGeneratePackageStructure:
         )
 
         package_path = Path(package_dir)
-        pyproject_content = (package_path / "pyproject.toml").read_text(encoding="utf-8")
+        pyproject_content = (package_path / "pyproject.toml").read_text(
+            encoding="utf-8"
+        )
 
         assert 'name = "test-package"' in pyproject_content
         assert 'version = "0.2.0"' in pyproject_content
@@ -463,4 +471,3 @@ class TestGeneratePackageStructure:
         package_path = Path(package_dir)
         assert package_path.exists()
         assert package_path.parent == nested_output
-

@@ -107,7 +107,11 @@ class TestCLI:
         )
 
         assert result.exit_code != 0
-        assert "Invalid" in result.output or "invalide" in result.output.lower() or "Error" in result.output
+        assert (
+            "Invalid" in result.output
+            or "invalide" in result.output.lower()
+            or "Error" in result.output
+        )
 
     def test_make_url_file_exists(self):
         """Test quand le fichier existe déjà."""
@@ -727,11 +731,11 @@ class TestCLIMakeDomaine:
 
         urls_content = (app_dir / "urls.py").read_text(encoding="utf-8")
         assert 'app_name = "pratique"' in urls_content
-        assert "name=\"liste\"" in urls_content
-        assert "name=\"detail\"" in urls_content
-        assert "name=\"creer\"" in urls_content
-        assert "name=\"modifier\"" in urls_content
-        assert "name=\"supprimer\"" in urls_content
+        assert 'name="liste"' in urls_content
+        assert 'name="detail"' in urls_content
+        assert 'name="creer"' in urls_content
+        assert 'name="modifier"' in urls_content
+        assert 'name="supprimer"' in urls_content
 
     def test_make_domaine_templates_content(self):
         """Test du contenu des templates générés."""
@@ -879,3 +883,293 @@ class TestCLIMakeDomaine:
         forms_content = (app_dir / "forms.py").read_text(encoding="utf-8")
         assert "class PratiqueForm" in forms_content
         assert "forms.ModelForm" in forms_content
+
+
+class TestCLIMakeDomaineDDD:
+    """Tests pour la commande make:domaine-ddd."""
+
+    def setup_method(self):
+        """Configuration avant chaque test."""
+        self.runner = CliRunner()
+        self.temp_dir = tempfile.mkdtemp()
+        self.output_dir = Path(self.temp_dir)
+
+    def teardown_method(self):
+        """Nettoyage après chaque test."""
+        shutil.rmtree(self.temp_dir, ignore_errors=True)
+
+    def test_make_domaine_ddd_help(self):
+        """Test de l'aide de la commande make:domaine-ddd."""
+        result = self.runner.invoke(cli, ["make:domaine-ddd", "--help"])
+        assert result.exit_code == 0
+        assert (
+            "Génère une structure complète de domaine Django selon les principes DDD"
+            in result.output
+        )
+
+    def test_make_domaine_ddd_with_options(self):
+        """Test de la génération avec options en ligne de commande."""
+        result = self.runner.invoke(
+            cli,
+            [
+                "make:domaine-ddd",
+                "--app-name",
+                "pratique",
+                "--model-name",
+                "Pratique",
+                "--output-dir",
+                str(self.output_dir),
+            ],
+            input="\n",
+        )
+
+        assert result.exit_code == 0
+        assert "Domaine DDD créé avec succès" in result.output
+
+        app_dir = self.output_dir / "pratique"
+        assert app_dir.exists()
+        assert (app_dir / "__init__.py").exists()
+        assert (app_dir / "apps.py").exists()
+        assert (app_dir / "admin.py").exists()
+        assert (app_dir / "domain" / "models.py").exists()
+        assert (app_dir / "domain" / "services.py").exists()
+        assert (app_dir / "domain" / "value_objects.py").exists()
+        assert (app_dir / "infrastructure" / "repositories.py").exists()
+        assert (app_dir / "presentation" / "views.py").exists()
+        assert (app_dir / "presentation" / "forms.py").exists()
+        assert (app_dir / "presentation" / "serializers.py").exists()
+        assert (app_dir / "presentation" / "urls.py").exists()
+        assert (app_dir / "templates" / "pratique" / "liste.html").exists()
+        assert (app_dir / "templates" / "pratique" / "detail.html").exists()
+        assert (app_dir / "templates" / "pratique" / "formulaire.html").exists()
+        assert (app_dir / "tests" / "test_models.py").exists()
+        assert (app_dir / "tests" / "test_services.py").exists()
+        assert (app_dir / "tests" / "test_views.py").exists()
+
+    def test_make_domaine_ddd_with_serializers(self):
+        """Test génération avec serializers.py."""
+        result = self.runner.invoke(
+            cli,
+            [
+                "make:domaine-ddd",
+                "--app-name",
+                "test_app",
+                "--model-name",
+                "TestModel",
+                "--output-dir",
+                str(self.output_dir),
+                "--include-serializers",
+            ],
+            input="\n",
+        )
+
+        assert result.exit_code == 0
+        app_dir = self.output_dir / "test_app"
+        assert (app_dir / "presentation" / "serializers.py").exists()
+
+        content = (app_dir / "presentation" / "serializers.py").read_text(
+            encoding="utf-8"
+        )
+        # Le nom du modèle est sanitized, donc TestModel devient Testmodel
+        assert "class TestmodelSerializer" in content
+        assert "Testmodel" in content
+
+    def test_make_domaine_ddd_without_serializers(self):
+        """Test génération sans serializers.py."""
+        result = self.runner.invoke(
+            cli,
+            [
+                "make:domaine-ddd",
+                "--app-name",
+                "test_app",
+                "--model-name",
+                "TestModel",
+                "--output-dir",
+                str(self.output_dir),
+                "--no-serializers",
+            ],
+            input="\n",
+        )
+
+        assert result.exit_code == 0
+        app_dir = self.output_dir / "test_app"
+        assert not (app_dir / "presentation" / "serializers.py").exists()
+
+    def test_make_domaine_ddd_auto_model_name(self):
+        """Test génération automatique du nom de modèle."""
+        result = self.runner.invoke(
+            cli,
+            [
+                "make:domaine-ddd",
+                "--app-name",
+                "pratique",
+                "--output-dir",
+                str(self.output_dir),
+            ],
+            input="\n",
+        )
+
+        assert result.exit_code == 0
+        app_dir = self.output_dir / "pratique"
+        assert app_dir.exists()
+
+        models_content = (app_dir / "domain" / "models.py").read_text(encoding="utf-8")
+        assert "class Pratique" in models_content
+
+    def test_make_domaine_ddd_domain_structure(self):
+        """Test de la structure du domaine."""
+        result = self.runner.invoke(
+            cli,
+            [
+                "make:domaine-ddd",
+                "--app-name",
+                "pratique",
+                "--model-name",
+                "Pratique",
+                "--output-dir",
+                str(self.output_dir),
+            ],
+            input="\n",
+        )
+
+        assert result.exit_code == 0
+        app_dir = self.output_dir / "pratique"
+
+        # Vérifier domain/models.py
+        models_content = (app_dir / "domain" / "models.py").read_text(encoding="utf-8")
+        assert "class Pratique" in models_content
+        assert "def est_valide" in models_content
+        assert "def peut_etre_modifiee" in models_content
+
+        # Vérifier domain/services.py
+        services_content = (app_dir / "domain" / "services.py").read_text(
+            encoding="utf-8"
+        )
+        assert "class PratiqueService" in services_content
+        assert "def creer_pratique" in services_content
+
+        # Vérifier domain/value_objects.py
+        vo_content = (app_dir / "domain" / "value_objects.py").read_text(
+            encoding="utf-8"
+        )
+        assert "class PratiqueId" in vo_content
+        assert "@dataclass(frozen=True)" in vo_content
+
+    def test_make_domaine_ddd_infrastructure_structure(self):
+        """Test de la structure infrastructure."""
+        result = self.runner.invoke(
+            cli,
+            [
+                "make:domaine-ddd",
+                "--app-name",
+                "pratique",
+                "--model-name",
+                "Pratique",
+                "--output-dir",
+                str(self.output_dir),
+            ],
+            input="\n",
+        )
+
+        assert result.exit_code == 0
+        app_dir = self.output_dir / "pratique"
+
+        repos_content = (app_dir / "infrastructure" / "repositories.py").read_text(
+            encoding="utf-8"
+        )
+        assert "class PratiqueRepository" in repos_content
+        assert "def obtenir_par_id" in repos_content
+        assert "def lister_tous" in repos_content
+        assert "def rechercher" in repos_content
+
+    def test_make_domaine_ddd_presentation_structure(self):
+        """Test de la structure presentation."""
+        result = self.runner.invoke(
+            cli,
+            [
+                "make:domaine-ddd",
+                "--app-name",
+                "pratique",
+                "--model-name",
+                "Pratique",
+                "--output-dir",
+                str(self.output_dir),
+            ],
+            input="\n",
+        )
+
+        assert result.exit_code == 0
+        app_dir = self.output_dir / "pratique"
+
+        views_content = (app_dir / "presentation" / "views.py").read_text(
+            encoding="utf-8"
+        )
+        assert "class PratiqueListView" in views_content
+        assert "PratiqueService" in views_content
+        assert "PratiqueRepository" in views_content
+
+        forms_content = (app_dir / "presentation" / "forms.py").read_text(
+            encoding="utf-8"
+        )
+        assert "class PratiqueForm" in forms_content
+
+        urls_content = (app_dir / "presentation" / "urls.py").read_text(
+            encoding="utf-8"
+        )
+        assert 'app_name = "pratique"' in urls_content
+
+    def test_make_domaine_ddd_tests_structure(self):
+        """Test de la structure des tests."""
+        result = self.runner.invoke(
+            cli,
+            [
+                "make:domaine-ddd",
+                "--app-name",
+                "pratique",
+                "--model-name",
+                "Pratique",
+                "--output-dir",
+                str(self.output_dir),
+            ],
+            input="\n",
+        )
+
+        assert result.exit_code == 0
+        app_dir = self.output_dir / "pratique"
+
+        test_models_content = (app_dir / "tests" / "test_models.py").read_text(
+            encoding="utf-8"
+        )
+        assert "class PratiqueModelTest" in test_models_content
+
+        test_services_content = (app_dir / "tests" / "test_services.py").read_text(
+            encoding="utf-8"
+        )
+        assert "class PratiqueServiceTest" in test_services_content
+
+        test_views_content = (app_dir / "tests" / "test_views.py").read_text(
+            encoding="utf-8"
+        )
+        assert "class PratiqueViewsTest" in test_views_content
+
+    def test_make_domaine_ddd_file_exists(self):
+        """Test quand le dossier existe déjà."""
+        existing_dir = self.output_dir / "pratique"
+        existing_dir.mkdir()
+
+        result = self.runner.invoke(
+            cli,
+            [
+                "make:domaine-ddd",
+                "--app-name",
+                "pratique",
+                "--model-name",
+                "Pratique",
+                "--output-dir",
+                str(self.output_dir),
+            ],
+            input="\n",
+        )
+
+        assert result.exit_code != 0
+        assert "existe déjà" in result.output

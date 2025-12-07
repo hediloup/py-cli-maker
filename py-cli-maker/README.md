@@ -1,12 +1,61 @@
 # py-cli-maker
 
-CLI pour générer des fichiers Python et routes Django Ninja de manière interactive.
+CLI pour générer des fichiers Python, routes Django Ninja, packages Python et domaines Django de manière interactive.
 
 ## Description
 
-`py-cli-maker` est un outil en ligne de commande qui facilite la génération de routes Django Ninja. Il pose des questions interactives et génère automatiquement des fichiers Python avec les routes configurées.
+`py-cli-maker` est un outil en ligne de commande qui facilite la génération de code Python. Il propose plusieurs commandes pour générer :
+- Des routes Django Ninja
+- Des packages Python complets
+- Des domaines Django (structure classique)
+- Des domaines Django avec architecture DDD (Domain-Driven Design)
+
+Il pose des questions interactives et génère automatiquement tous les fichiers nécessaires avec du code initialisé.
 
 ##  Installation
+
+### Dépendances
+
+**Pour utiliser py-cli-maker :**
+- `click>=8.0.0` (installé automatiquement)
+
+**Pour utiliser le code généré :**
+- **`make:url`** : Nécessite `django-ninja` dans votre projet Django
+- **`make:domaine`** : Nécessite `django` dans votre projet Django
+- **`make:domaine-ddd`** : Nécessite `django` dans votre projet Django
+  - Si vous utilisez les serializers : Nécessite aussi `djangorestframework`
+
+> **Note importante** : Le générateur lui-même n'a pas besoin de Django ou DRF pour fonctionner. Ces dépendances sont nécessaires uniquement pour **utiliser** le code généré dans votre projet Django.
+
+### Installation avec dépendances optionnelles
+
+Si vous voulez installer py-cli-maker avec les dépendances nécessaires pour tester/utiliser le code généré :
+
+```bash
+# Installation avec Django uniquement
+pip install "py-cli-maker[django]"
+
+# Installation avec Django Ninja
+pip install "py-cli-maker[django-ninja]"
+
+# Installation avec Django REST Framework
+pip install "py-cli-maker[django-drf]"
+
+# Installation avec toutes les dépendances Django
+pip install "py-cli-maker[django-all]"
+
+# Installation avec dépendances de développement
+pip install "py-cli-maker[dev]"
+
+# Installation complète (dev + django-all)
+pip install "py-cli-maker[dev,django-all]"
+```
+
+**Avec uv :**
+```bash
+# Installation avec toutes les dépendances Django
+uv pip install "py-cli-maker[django-all]"
+```
 
 ### Installation depuis le code source
 
@@ -60,15 +109,37 @@ pip install py-cli-maker
 
 ## Utilisation
 
-### Génération interactive
+`py-cli-maker` propose plusieurs commandes pour différents cas d'usage :
 
-La méthode la plus simple est d'utiliser le mode interactif :
+### Vue d'ensemble des commandes
+
+| Commande | Description | Cas d'usage |
+|----------|-------------|-------------|
+| `make:url` | Génère une route Django Ninja | API REST avec Django Ninja |
+| `make:package` | Génère un package Python complet | Création de bibliothèques Python |
+| `make:domaine` | Génère un domaine Django classique | Applications Django traditionnelles |
+| `make:domaine-ddd` | Génère un domaine Django DDD | Applications Django avec architecture DDD |
+
+### Commandes disponibles
+
+- **`make:url`** - Génère une route Django Ninja
+- **`make:package`** - Génère une structure complète de package Python
+- **`make:domaine`** - Génère une structure de domaine Django classique
+- **`make:domaine-ddd`** - Génère une structure de domaine Django avec architecture DDD
+
+---
+
+## 1. make:url - Génération de routes Django Ninja
+
+Génère un fichier Python contenant une route Django Ninja.
+
+### Génération interactive
 
 ```bash
 py-cli make:url
 ```
 
-Le CLI vous posera alors des questions sur :
+Le CLI vous posera des questions sur :
 - Le nom du module/app
 - Le nom de la fonction
 - Le chemin d'URL
@@ -78,8 +149,6 @@ Le CLI vous posera alors des questions sur :
 - La description de l'endpoint (optionnel)
 
 ### Génération avec options
-
-Vous pouvez également fournir toutes les options directement :
 
 ```bash
 py-cli make:url \
@@ -138,6 +207,216 @@ urlpatterns = [
     path("api/", api.urls),
 ]
 ```
+
+---
+
+## 2. make:package - Génération de package Python
+
+Génère une structure complète de package Python selon les best practices modernes.
+
+### Génération interactive
+
+```bash
+py-cli make:package
+```
+
+### Génération avec options
+
+```bash
+py-cli make:package \
+  --project-name my-awesome-package \
+  --package-name my_awesome_package \
+  --version 0.1.0 \
+  --description "Un package Python génial" \
+  --author-name "Votre Nom" \
+  --author-email "votre@email.com" \
+  --python-version 3.8 \
+  --license MIT \
+  --output-dir .
+```
+
+### Structure générée
+
+```
+my-awesome-package/
+├── pyproject.toml          # Configuration moderne du package
+├── README.md               # Documentation
+├── LICENSE                 # Licence (MIT, Apache-2.0, etc.)
+├── .gitignore             # Fichiers à ignorer
+├── MANIFEST.in            # Fichiers à inclure dans la distribution
+├── Makefile               # Commandes utiles (optionnel)
+├── my_awesome_package/    # Code source
+│   └── __init__.py
+└── tests/                 # Tests
+    ├── __init__.py
+    └── test_my_awesome_package.py
+```
+
+### Options principales
+
+| Option | Raccourci | Description | Défaut |
+|--------|-----------|-------------|--------|
+| `--project-name` | `-p` | Nom du projet (avec tirets) | Requis |
+| `--package-name` | `-n` | Nom du package Python | Auto |
+| `--version` | `-v` | Version initiale | `0.1.0` |
+| `--description` | `-d` | Description | Requis |
+| `--author-name` | `-a` | Nom de l'auteur | Requis |
+| `--author-email` | `-e` | Email de l'auteur | Requis |
+| `--python-version` | | Version Python minimale | `3.8` |
+| `--license` | `-l` | Type de licence | `MIT` |
+| `--output-dir` | `-o` | Dossier de sortie | `.` |
+| `--include-makefile/--no-makefile` | | Inclure Makefile | `True` |
+| `--include-manifest/--no-manifest` | | Inclure MANIFEST.in | `True` |
+
+---
+
+## 3. make:domaine - Génération de domaine Django classique
+
+Génère une structure complète de domaine Django avec tous les fichiers nécessaires.
+
+### Génération interactive
+
+```bash
+py-cli make:domaine
+```
+
+### Génération avec options
+
+```bash
+py-cli make:domaine \
+  --app-name pratique \
+  --model-name Pratique \
+  --output-dir .
+```
+
+### Structure générée
+
+```
+pratique/
+├── __init__.py
+├── apps.py
+├── admin.py
+├── models.py              # Modèles Pratique, SessionPratique
+├── views.py               # Vues génériques Django
+├── urls.py                # Routes de l'app
+├── forms.py               # Formulaires
+├── services.py            # Logique métier (optionnel)
+├── selectors.py           # Requêtes complexes (optionnel)
+└── templates/
+    └── pratique/
+        ├── liste.html
+        ├── detail.html
+        └── formulaire.html
+```
+
+### Options principales
+
+| Option | Raccourci | Description | Défaut |
+|--------|-----------|-------------|--------|
+| `--app-name` | `-a` | Nom de l'app Django | Requis |
+| `--model-name` | `-m` | Nom du modèle principal | Auto |
+| `--output-dir` | `-o` | Dossier de sortie | `.` |
+| `--include-services/--no-services` | | Inclure services.py | `True` |
+| `--include-selectors/--no-selectors` | | Inclure selectors.py | `True` |
+| `--description` | `-d` | Description du domaine | Optionnel |
+
+### Prochaines étapes après génération
+
+1. Ajoutez `'pratique'` à `INSTALLED_APPS` dans `settings.py`
+2. Incluez les URLs dans votre `urls.py` principal :
+   ```python
+   from django.urls import include, path
+   path('pratique/', include('pratique.urls')),
+   ```
+3. Exécutez les migrations :
+   ```bash
+   python manage.py makemigrations pratique
+   python manage.py migrate
+   ```
+
+---
+
+## 4. make:domaine-ddd - Génération de domaine Django avec architecture DDD
+
+Génère une structure de domaine Django organisée selon les principes DDD (Domain-Driven Design) light.
+
+### Génération interactive
+
+```bash
+py-cli make:domaine-ddd
+```
+
+### Génération avec options
+
+```bash
+py-cli make:domaine-ddd \
+  --app-name pratique \
+  --model-name Pratique \
+  --output-dir . \
+  --include-serializers
+```
+
+### Structure générée
+
+```
+pratique/
+├── __init__.py
+├── apps.py
+├── admin.py
+├── domain/                      # Couche domaine
+│   ├── models.py               # Entités métier avec logique métier pure
+│   ├── services.py             # Règles métier complexes
+│   └── value_objects.py        # Objets de valeur immutables
+├── infrastructure/             # Couche infrastructure
+│   └── repositories.py         # Accès DB, querysets personnalisés
+├── presentation/               # Couche présentation
+│   ├── views.py               # Django views (utilisent services et repositories)
+│   ├── forms.py              # Formulaires
+│   ├── serializers.py        # DRF serializers (optionnel)
+│   └── urls.py               # Routes
+├── templates/
+│   └── pratique/
+│       ├── liste.html
+│       ├── detail.html
+│       └── formulaire.html
+└── tests/
+    ├── test_models.py
+    ├── test_services.py
+    └── test_views.py
+```
+
+### Avantages de l'architecture DDD
+
+- **Séparation des responsabilités** : Domain, Infrastructure, Presentation
+- **Logique métier isolée** : Les règles métier sont dans le domaine
+- **Testabilité** : Chaque couche peut être testée indépendamment
+- **Maintenabilité** : Code organisé et facile à comprendre
+- **Évolutivité** : Facile d'ajouter de nouvelles fonctionnalités
+
+### Options principales
+
+| Option | Raccourci | Description | Défaut |
+|--------|-----------|-------------|--------|
+| `--app-name` | `-a` | Nom de l'app Django | Requis |
+| `--model-name` | `-m` | Nom du modèle principal | Auto |
+| `--output-dir` | `-o` | Dossier de sortie | `.` |
+| `--include-serializers/--no-serializers` | | Inclure serializers.py pour DRF | `True` |
+| `--description` | `-d` | Description du domaine | Optionnel |
+
+### Prochaines étapes après génération
+
+1. Ajoutez `'pratique'` à `INSTALLED_APPS` dans `settings.py`
+2. Incluez les URLs dans votre `urls.py` principal :
+   ```python
+   from django.urls import include, path
+   path('pratique/', include('pratique.presentation.urls')),
+   ```
+3. Exécutez les migrations :
+   ```bash
+   python manage.py makemigrations pratique
+   python manage.py migrate
+   ```
+4. Si vous utilisez les serializers, assurez-vous d'avoir `'rest_framework'` dans `INSTALLED_APPS`
 
 ## 🔧 Dépannage : Erreur "externally-managed-environment"
 
@@ -736,10 +1015,16 @@ py-cli-maker/
 │   ├── cli.py             # Interface CLI
 │   └── generators/        # Générateurs
 │       ├── __init__.py
-│       └── ninja_routes.py
+│       ├── ninja_routes.py          # Générateur de routes Django Ninja
+│       ├── package_generator.py     # Générateur de packages Python
+│       ├── domaine_generator.py     # Générateur de domaines Django classiques
+│       └── ddd_domaine_generator.py # Générateur de domaines Django DDD
 ├── tests/                 # Tests
 │   ├── __init__.py
 │   ├── test_ninja_routes.py
+│   ├── test_package_generator.py
+│   ├── test_domaine_generator.py
+│   ├── test_ddd_domaine_generator.py
 │   └── test_cli.py
 ├── pyproject.toml         # Configuration du projet
 └── README.md             # Ce fichier
