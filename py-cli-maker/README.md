@@ -32,8 +32,8 @@ uv pip install -e ".[dev]"
 ```
 
 **⚠️ Important avec uv :**
-- ❌ **Ne pas utiliser** : `uv run pip install` (cela provoque une erreur "externally-managed-environment")
-- ✅ **Utiliser** : `uv sync` ou `uv pip install` directement
+-  **Ne pas utiliser** : `uv run pip install` (cela provoque une erreur "externally-managed-environment")
+-  **Utiliser** : `uv sync` ou `uv pip install` directement
 
 #### Avec pip standard
 
