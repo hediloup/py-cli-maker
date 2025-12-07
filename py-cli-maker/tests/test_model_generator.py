@@ -252,3 +252,65 @@ class TestGenerateModelFile:
         content = Path(result).read_text()
         assert "import uuid" in content
         assert "uuid = models.UUIDField" in content
+
+    def test_generate_model_raises_without_related_model(self, tmp_path):
+        """Test erreur si un champ de relation n'a pas de related_model."""
+        app_dir = tmp_path / "myapp"
+        app_dir.mkdir()
+
+        # Test avec ForeignKey sans related_model
+        fields = [
+            {
+                "name": "author",
+                "type": "ForeignKey",
+                "options": "",
+                "related_model": None,
+            }
+        ]
+
+        with pytest.raises(ValueError, match="nécessite un modèle lié"):
+            generate_model_file(
+                app_name="myapp",
+                model_name="Article",
+                fields=fields,
+                output_dir=str(tmp_path),
+                add_timestamps=True,
+            )
+
+        # Test avec ManyToManyField sans related_model
+        fields = [
+            {
+                "name": "tags",
+                "type": "ManyToManyField",
+                "options": "",
+                "related_model": None,
+            }
+        ]
+
+        with pytest.raises(ValueError, match="nécessite un modèle lié"):
+            generate_model_file(
+                app_name="myapp",
+                model_name="Post",
+                fields=fields,
+                output_dir=str(tmp_path),
+                add_timestamps=True,
+            )
+
+        # Test avec OneToOneField sans related_model
+        fields = [
+            {
+                "name": "profile",
+                "type": "OneToOneField",
+                "options": "",
+                "related_model": None,
+            }
+        ]
+
+        with pytest.raises(ValueError, match="nécessite un modèle lié"):
+            generate_model_file(
+                app_name="myapp",
+                model_name="User",
+                fields=fields,
+                output_dir=str(tmp_path),
+                add_timestamps=True,
+            )

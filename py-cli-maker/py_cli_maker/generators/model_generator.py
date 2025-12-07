@@ -157,23 +157,23 @@ def _generate_model_code(
 
         # Construit la ligne du champ
         if field_type in ["ForeignKey", "ManyToManyField", "OneToOneField"]:
-            if related_model:
-                app_name_ref, model_name_ref = related_model.split(".")
-                field_line = f"    {field_name} = models.{field_type}("
-                field_line += f"{model_name_ref}, "
-                if field_type == "ForeignKey":
-                    field_line += "on_delete=models.CASCADE"
-                elif field_type == "OneToOneField":
-                    field_line += "on_delete=models.CASCADE"
-                if field_options:
-                    field_line += f", {field_options}"
-                field_line += ")"
-            else:
-                field_line = f"    {field_name} = models.{field_type}("
-                field_line += f"'{related_model}', on_delete=models.CASCADE"
-                if field_options:
-                    field_line += f", {field_options}"
-                field_line += ")"
+            if not related_model:
+                raise ValueError(
+                    f"Le champ de relation '{field_name}' (type: {field_type}) "
+                    "nécessite un modèle lié (related_model). "
+                    "Utilisez le format 'app.Model'."
+                )
+            app_name_ref, model_name_ref = related_model.split(".")
+            field_line = f"    {field_name} = models.{field_type}("
+            field_line += f"{model_name_ref}"
+            if field_type == "ForeignKey":
+                field_line += ", on_delete=models.CASCADE"
+            elif field_type == "OneToOneField":
+                field_line += ", on_delete=models.CASCADE"
+            # ManyToManyField n'a pas besoin de on_delete
+            if field_options:
+                field_line += f", {field_options}"
+            field_line += ")"
         else:
             field_def = DJANGO_FIELD_TYPES.get(field_type, f"models.{field_type}()")
             # Remplace les options par défaut si fournies
