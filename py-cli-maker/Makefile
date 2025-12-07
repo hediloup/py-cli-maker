@@ -51,7 +51,7 @@ coverage:
 	fi
 
 quality: format lint type test
-	@echo "✅ Tous les outils de qualité ont été exécutés avec succès !"
+	@echo " Tous les outils de qualité ont été exécutés avec succès !"
 
 clean:
 	find . -type d -name __pycache__ -exec rm -r {} + 2>/dev/null || true
@@ -63,5 +63,5 @@ clean:
 	rm -rf .coverage
 	rm -rf .mypy_cache
 	rm -rf .ruff_cache
-	@echo "🧹 Nettoyage terminé !"
+	@echo " Nettoyage terminé !"
 

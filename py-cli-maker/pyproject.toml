@@ -25,7 +25,6 @@ classifiers = [
 ]
 dependencies = [
     "click>=8.0.0",
-    "ninja",
 ]
 keywords = ["cli", "code-generator", "django", "ninja", "scaffolding"]
 

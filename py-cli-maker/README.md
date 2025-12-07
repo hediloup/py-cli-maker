@@ -149,13 +149,13 @@ Si vous obtenez l'erreur `externally-managed-environment` avec `uv run pip insta
 
 2. **Solution avec uv** : Utilisez directement les commandes `uv` :
    ```bash
-   # ✅ CORRECT - Synchroniser depuis pyproject.toml
+   # CORRECT - Synchroniser depuis pyproject.toml
    uv sync
    
-   # ✅ CORRECT - Installer avec uv pip (sans "run")
+   # CORRECT - Installer avec uv pip (sans "run")
    uv pip install -e ".[dev]"
    
-   # ❌ INCORRECT - Ne pas utiliser cette commande
+   # INCORRECT - Ne pas utiliser cette commande
    uv run pip install ...
    ```
 
@@ -198,10 +198,10 @@ pip install -e ".[dev]"
 pip install black ruff mypy pytest pytest-cov ipdb
 ```
 
-**⚠️ Erreur courante avec uv :**
+** Erreur courante avec uv :**
 Si vous obtenez l'erreur `externally-managed-environment` :
-- ❌ **Ne pas utiliser** : `uv run pip install ...`
-- ✅ **Utiliser** : `uv sync` ou `uv pip install ...` directement
+-  **Ne pas utiliser** : `uv run pip install ...`
+-  **Utiliser** : `uv sync` ou `uv pip install ...` directement
 
 ### 1. Black - Formatage automatique
 
@@ -505,7 +505,7 @@ def test_with_error():
         raise
 ```
 
-## 🔄 Workflow de développement recommandé
+##  Workflow de développement recommandé
 
 ### Avec uv
 
@@ -576,7 +576,7 @@ def test_with_error():
    pytest --cov=py_cli_maker --cov-report=term-missing
    ```
 
-## 📦 Utilisation du Makefile
+##  Utilisation du Makefile
 
 Le projet inclut un `Makefile` qui automatise toutes les tâches de développement. Le Makefile détecte automatiquement si vous utilisez `uv` ou `pip` standard.
 
