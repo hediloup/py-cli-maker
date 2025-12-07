@@ -1060,7 +1060,7 @@ Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
 
 ## 👤 Auteur
 
-**Hedi** - hedi@dhib.com
+**Hedi DHIB** - hedi@dhib.com
 
 ## Remerciements
 
