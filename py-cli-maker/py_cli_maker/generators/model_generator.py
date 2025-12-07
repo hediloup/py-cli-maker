@@ -2,7 +2,7 @@
 
 import re
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Tuple
 
 from py_cli_maker.generators.domaine_generator import (
     _sanitize_app_name,
@@ -24,7 +24,9 @@ DJANGO_FIELD_TYPES = {
     "EmailField": "models.EmailField()",
     "URLField": "models.URLField()",
     "SlugField": "models.SlugField()",
-    "UUIDField": "models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)",
+    "UUIDField": (
+        "models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)"
+    ),
     "ForeignKey": "models.ForeignKey('app.Model', on_delete=models.CASCADE)",
     "ManyToManyField": "models.ManyToManyField('app.Model')",
     "OneToOneField": "models.OneToOneField('app.Model', on_delete=models.CASCADE)",
@@ -91,7 +93,8 @@ def generate_model_file(
         app_name: Nom de l'app Django
         model_name: Nom du modèle
         fields: Liste de dictionnaires avec les champs
-                Format: [{"name": "nom", "type": "CharField", "options": "max_length=100"}]
+                Format: [{"name": "nom", "type": "CharField",
+                "options": "max_length=100"}]
         output_dir: Dossier de sortie
         add_timestamps: Ajouter created_at et updated_at
 
@@ -107,11 +110,15 @@ def generate_model_file(
     # Si le fichier existe, on l'ajoute au fichier existant
     if models_file.exists():
         content = models_file.read_text(encoding="utf-8")
-        # Vérifie si le modèle existe déjà
-        if f"class {model_name}" in content:
-            raise ValueError(
-                f"Le modèle {model_name} existe déjà dans {models_file}"
-            )
+        # Vérifie si le modèle existe déjà (cherche le pattern exact)
+        # On cherche à la fois le nom original et le nom sanitized
+        import re
+
+        pattern1 = rf"class\s+{re.escape(model_name)}\s*\("
+        # Le nom peut être sanitized différemment, cherchons aussi le nom original
+        # avant sanitization
+        if re.search(pattern1, content):
+            raise ValueError(f"Le modèle {model_name} existe déjà dans {models_file}")
         # Ajoute le nouveau modèle avant la dernière ligne
         model_code = _generate_model_code(model_name, fields, add_timestamps)
         # Ajoute deux lignes vides avant le nouveau modèle
@@ -152,7 +159,7 @@ def _generate_model_code(
         if field_type in ["ForeignKey", "ManyToManyField", "OneToOneField"]:
             if related_model:
                 app_name_ref, model_name_ref = related_model.split(".")
-                field_line = f'    {field_name} = models.{field_type}('
+                field_line = f"    {field_name} = models.{field_type}("
                 field_line += f"{model_name_ref}, "
                 if field_type == "ForeignKey":
                     field_line += "on_delete=models.CASCADE"
@@ -162,7 +169,7 @@ def _generate_model_code(
                     field_line += f", {field_options}"
                 field_line += ")"
             else:
-                field_line = f'    {field_name} = models.{field_type}('
+                field_line = f"    {field_name} = models.{field_type}("
                 field_line += f"'{related_model}', on_delete=models.CASCADE"
                 if field_options:
                     field_line += f", {field_options}"
@@ -201,6 +208,9 @@ def _generate_model_code(
     if imports_code and "from django.db import models" not in imports_code:
         imports_code = "from django.db import models\n" + imports_code
 
+    # Détermine l'ordering
+    ordering_value = '["-created_at"]' if add_timestamps else '["id"]'
+
     model_code = f'''class {model_name}(models.Model):
     """Modèle {model_name}."""
 
@@ -209,7 +219,7 @@ def _generate_model_code(
     class Meta:
         verbose_name = "{model_name}"
         verbose_name_plural = "{model_name}s"
-        ordering = ["-created_at"] if add_timestamps else ["id"]
+        ordering = {ordering_value}
 
     def __str__(self):
         return f"{model_name} #{{self.id}}"
@@ -226,4 +236,3 @@ def _generate_models_file_content(
     """Génère le contenu complet d'un fichier models.py."""
     model_code = _generate_model_code(model_name, fields, add_timestamps)
     return model_code
-

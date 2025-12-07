@@ -24,6 +24,7 @@ Il pose des questions interactives et génère automatiquement tous les fichiers
 - **`make:domaine`** : Nécessite `django` dans votre projet Django
 - **`make:domaine-ddd`** : Nécessite `django` dans votre projet Django
   - Si vous utilisez les serializers : Nécessite aussi `djangorestframework`
+- **`make:model`** : Nécessite `django` dans votre projet Django
 
 > **Note importante** : Le générateur lui-même n'a pas besoin de Django ou DRF pour fonctionner. Ces dépendances sont nécessaires uniquement pour **utiliser** le code généré dans votre projet Django.
 
@@ -119,6 +120,7 @@ pip install py-cli-maker
 | `make:package` | Génère un package Python complet | Création de bibliothèques Python |
 | `make:domaine` | Génère un domaine Django classique | Applications Django traditionnelles |
 | `make:domaine-ddd` | Génère un domaine Django DDD | Applications Django avec architecture DDD |
+| `make:model` | Génère un modèle Django interactivement | Création de modèles avec champs personnalisés |
 
 ### Commandes disponibles
 
@@ -126,6 +128,7 @@ pip install py-cli-maker
 - **`make:package`** - Génère une structure complète de package Python
 - **`make:domaine`** - Génère une structure de domaine Django classique
 - **`make:domaine-ddd`** - Génère une structure de domaine Django avec architecture DDD
+- **`make:model`** - Génère un modèle Django avec champs interactifs
 
 ---
 
@@ -1006,6 +1009,184 @@ Si vous préférez utiliser les commandes directement :
 | `make coverage` | `uv run pytest --cov=py_cli_maker --cov-report=html` | `pytest --cov=py_cli_maker --cov-report=html` |
 | `make quality` | `uv run black ... && uv run ruff ... && uv run mypy ... && uv run pytest` | `black ... && ruff ... && mypy ... && pytest` |
 
+## 5. make:model - Génération interactive de modèles Django
+
+Génère un modèle Django avec des champs définis interactivement, similaire à `make:entity` de Symfony.
+
+### Fonctionnalités
+
+- **Interface interactive** : Pose des questions pour chaque champ
+- **Types de champs** : Propose tous les types de champs Django disponibles
+- **Détection automatique** : Détecte les modèles existants pour les relations
+- **Relations** : Supporte ForeignKey, ManyToManyField et OneToOneField
+- **Options avancées** : Permet de configurer max_length, blank, null, verbose_name, etc.
+
+### Génération interactive
+
+```bash
+py-cli make:model
+```
+
+Le CLI vous posera des questions sur :
+- Le nom de l'app Django
+- Le nom du modèle
+- Le dossier de sortie
+- Pour chaque champ :
+  - Le nom du champ
+  - Le type de champ (avec liste de suggestions)
+  - Si c'est une relation, le modèle lié (avec liste des modèles existants)
+  - Les options supplémentaires (max_length, blank, null, verbose_name, etc.)
+
+### Génération avec options
+
+```bash
+py-cli make:model \
+  --app-name pratique \
+  --model-name Pratique \
+  --output-dir . \
+  --no-timestamps  # Pour ne pas ajouter created_at/updated_at
+```
+
+### Options disponibles
+
+| Option | Raccourci | Description | Défaut |
+|--------|-----------|-------------|--------|
+| `--app-name` | `-a` | Nom de l'app Django | Demande interactivement |
+| `--model-name` | `-m` | Nom du modèle | Demande interactivement |
+| `--output-dir` | `-o` | Dossier de sortie (chemin du projet Django) | `.` |
+| `--no-timestamps` | | Ne pas ajouter created_at et updated_at | `False` |
+
+### Types de champs disponibles
+
+La commande propose tous les types de champs Django standards :
+
+- **Champs texte** : `CharField`, `TextField`, `EmailField`, `URLField`, `SlugField`
+- **Champs numériques** : `IntegerField`, `BigIntegerField`, `DecimalField`, `FloatField`, `PositiveIntegerField`
+- **Champs date/heure** : `DateField`, `DateTimeField`, `TimeField`, `DurationField`
+- **Champs booléens** : `BooleanField`
+- **Champs fichiers** : `FileField`, `ImageField`
+- **Champs spéciaux** : `UUIDField`, `JSONField`, `IPAddressField`, `BinaryField`
+- **Relations** : `ForeignKey`, `ManyToManyField`, `OneToOneField`
+
+### Détection des modèles existants
+
+La commande scanne automatiquement votre projet Django pour trouver les modèles existants et vous les propose lors de la création de relations :
+
+```
+🔍 Recherche des modèles existants...
+✅ 3 modèle(s) trouvé(s)
+
+Modèles existants disponibles :
+  1. categories.Category
+  2. tags.Tag
+  3. users.User
+
+Choisissez le modèle lié (numéro ou app.Model): 1
+```
+
+### Exemple d'utilisation interactive
+
+```bash
+$ py-cli make:model --app-name blog --model-name Article
+
+🔍 Recherche des modèles existants...
+✅ 2 modèle(s) trouvé(s)
+
+📝 Définition des champs du modèle
+
+--- Champ 1 ---
+Nom du champ (ou 'fin' pour terminer): title
+Est-ce une relation vers un autre modèle ? [y/N]: n
+
+Types de champs disponibles :
+  1. CharField
+  2. TextField
+  ...
+Choisissez le type de champ (numéro ou nom): 1
+
+Options disponibles (laissez vide pour terminer) :
+Ajouter max_length ? [y/N]: y
+max_length [255]: 200
+Le champ peut être vide (blank=True) ? [y/N]: n
+Le champ peut être null (null=True) ? [y/N]: n
+Ajouter un verbose_name ? [y/N]: y
+verbose_name: Titre de l'article
+
+--- Champ 2 ---
+Nom du champ (ou 'fin' pour terminer): author
+Est-ce une relation vers un autre modèle ? [y/N]: y
+
+Types de relations disponibles :
+  1. ForeignKey
+  2. ManyToManyField
+  3. OneToOneField
+Choisissez le type de relation (numéro ou nom): 1
+
+Modèles existants disponibles :
+  1. users.User
+Choisissez le modèle lié (numéro ou app.Model): 1
+
+Ajouter related_name ? [y/N]: y
+related_name: articles
+
+--- Champ 3 ---
+Nom du champ (ou 'fin' pour terminer): fin
+
+⚙️  Génération du modèle...
+✅ Modèle généré avec succès : /path/to/blog/models.py
+
+💡 Prochaines étapes :
+  1. Vérifiez le modèle dans /path/to/blog/models.py
+  2. Exécutez: python manage.py makemigrations blog
+  3. Appliquez: python manage.py migrate
+```
+
+### Exemple de modèle généré
+
+Pour l'exemple ci-dessus, le modèle généré sera :
+
+```python
+from django.db import models
+from users.models import User
+
+
+class Article(models.Model):
+    """Modèle Article."""
+
+    id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=200, verbose_name="Titre de l'article")
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="articles")
+    created_at = models.DateTimeField(
+        auto_now_add=True, verbose_name="Date de création"
+    )
+    updated_at = models.DateTimeField(
+        auto_now=True, verbose_name="Date de modification"
+    )
+
+    class Meta:
+        verbose_name = "Article"
+        verbose_name_plural = "Articles"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Article #{self.id}"
+```
+
+### Ajout à un fichier existant
+
+Si le fichier `models.py` existe déjà, le nouveau modèle sera ajouté au fichier existant. Si le modèle existe déjà, une erreur sera levée.
+
+### Prochaines étapes
+
+Après la génération :
+
+1. Vérifiez le modèle généré dans `{app_name}/models.py`
+2. Exécutez les migrations : `python manage.py makemigrations {app_name}`
+3. Appliquez les migrations : `python manage.py migrate`
+4. (Optionnel) Ajoutez le modèle à `admin.py` pour l'interface d'administration
+
+---
+
 ##  Structure du projet
 
 ```
@@ -1018,13 +1199,15 @@ py-cli-maker/
 │       ├── ninja_routes.py          # Générateur de routes Django Ninja
 │       ├── package_generator.py     # Générateur de packages Python
 │       ├── domaine_generator.py     # Générateur de domaines Django classiques
-│       └── ddd_domaine_generator.py # Générateur de domaines Django DDD
+│       ├── ddd_domaine_generator.py # Générateur de domaines Django DDD
+│       └── model_generator.py       # Générateur de modèles Django
 ├── tests/                 # Tests
 │   ├── __init__.py
 │   ├── test_ninja_routes.py
 │   ├── test_package_generator.py
 │   ├── test_domaine_generator.py
 │   ├── test_ddd_domaine_generator.py
+│   ├── test_model_generator.py
 │   └── test_cli.py
 ├── pyproject.toml         # Configuration du projet
 └── README.md             # Ce fichier
