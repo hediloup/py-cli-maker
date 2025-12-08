@@ -1,10 +1,10 @@
-# py-cli-maker
+# pyfastcli
 
 CLI pour générer des fichiers Python, routes Django Ninja, packages Python et domaines Django de manière interactive.
 
 ## Description
 
-`py-cli-maker` est un outil en ligne de commande qui facilite la génération de code Python. Il propose plusieurs commandes pour générer :
+`pyfastcli` est un outil en ligne de commande qui facilite la génération de code Python. Il propose plusieurs commandes pour générer :
 - Des routes Django Ninja
 - Des packages Python complets
 - Des domaines Django (structure classique)
@@ -16,7 +16,7 @@ Il pose des questions interactives et génère automatiquement tous les fichiers
 
 ### Dépendances
 
-**Pour utiliser py-cli-maker :**
+**Pour utiliser pyfastcli :**
 - `click>=8.0.0` (installé automatiquement)
 
 **Pour utiliser le code généré :**
@@ -30,32 +30,32 @@ Il pose des questions interactives et génère automatiquement tous les fichiers
 
 ### Installation avec dépendances optionnelles
 
-Si vous voulez installer py-cli-maker avec les dépendances nécessaires pour tester/utiliser le code généré :
+Si vous voulez installer pyfastcli avec les dépendances nécessaires pour tester/utiliser le code généré :
 
 ```bash
 # Installation avec Django uniquement
-pip install "py-cli-maker[django]"
+pip install "pyfastcli[django]"
 
 # Installation avec Django Ninja
-pip install "py-cli-maker[django-ninja]"
+pip install "pyfastcli[django-ninja]"
 
 # Installation avec Django REST Framework
-pip install "py-cli-maker[django-drf]"
+pip install "pyfastcli[django-drf]"
 
 # Installation avec toutes les dépendances Django
-pip install "py-cli-maker[django-all]"
+pip install "pyfastcli[django-all]"
 
 # Installation avec dépendances de développement
-pip install "py-cli-maker[dev]"
+pip install "pyfastcli[dev]"
 
 # Installation complète (dev + django-all)
-pip install "py-cli-maker[dev,django-all]"
+pip install "pyfastcli[dev,django-all]"
 ```
 
 **Avec uv :**
 ```bash
 # Installation avec toutes les dépendances Django
-uv pip install "py-cli-maker[django-all]"
+uv pip install "pyfastcli[django-all]"
 ```
 
 ### Installation depuis le code source
@@ -64,8 +64,8 @@ uv pip install "py-cli-maker[django-all]"
 
 ```bash
 # Cloner le dépôt
-git clone https://github.com/hedi/py-cli-maker.git
-cd py-cli-maker
+git clone https://github.com/hedi/pyfastcli.git
+cd pyfastcli
 
 # Créer un environnement virtuel (si pas déjà fait)
 uv venv
@@ -105,12 +105,12 @@ pip install -e ".[dev]"
 ### Installation depuis PyPI (quand disponible)
 
 ```bash
-pip install py-cli-maker
+pip install pyfastcli
 ```
 
 ## Utilisation
 
-`py-cli-maker` propose plusieurs commandes pour différents cas d'usage :
+`pyfastcli` propose plusieurs commandes pour différents cas d'usage :
 
 ### Vue d'ensemble des commandes
 
@@ -139,7 +139,7 @@ Génère un fichier Python contenant une route Django Ninja.
 ### Génération interactive
 
 ```bash
-py-cli make:url
+pyfastcli make:url
 ```
 
 Le CLI vous posera des questions sur :
@@ -154,7 +154,7 @@ Le CLI vous posera des questions sur :
 ### Génération avec options
 
 ```bash
-py-cli make:url \
+pyfastcli make:url \
   --function-name get_orders \
   --url-path /orders \
   --http-method get \
@@ -177,7 +177,7 @@ py-cli make:url \
 
 ### Exemple de fichier généré
 
-Pour la commande `py-cli make:url --function-name get_orders --url-path /orders --http-method get --tag Orders`, le fichier `get_orders.py` sera créé :
+Pour la commande `pyfastcli make:url --function-name get_orders --url-path /orders --http-method get --tag Orders`, le fichier `get_orders.py` sera créé :
 
 ```python
 from ninja import Router
@@ -220,13 +220,13 @@ Génère une structure complète de package Python selon les best practices mode
 ### Génération interactive
 
 ```bash
-py-cli make:package
+pyfastcli make:package
 ```
 
 ### Génération avec options
 
 ```bash
-py-cli make:package \
+pyfastcli make:package \
   --project-name my-awesome-package \
   --package-name my_awesome_package \
   --version 0.1.0 \
@@ -280,13 +280,13 @@ Génère une structure complète de domaine Django avec tous les fichiers néces
 ### Génération interactive
 
 ```bash
-py-cli make:domaine
+pyfastcli make:domaine
 ```
 
 ### Génération avec options
 
 ```bash
-py-cli make:domaine \
+pyfastcli make:domaine \
   --app-name pratique \
   --model-name Pratique \
   --output-dir .
@@ -346,13 +346,13 @@ Génère une structure de domaine Django organisée selon les principes DDD (Dom
 ### Génération interactive
 
 ```bash
-py-cli make:domaine-ddd
+pyfastcli make:domaine-ddd
 ```
 
 ### Génération avec options
 
 ```bash
-py-cli make:domaine-ddd \
+pyfastcli make:domaine-ddd \
   --app-name pratique \
   --model-name Pratique \
   --output-dir . \
@@ -494,25 +494,25 @@ Si vous obtenez l'erreur `externally-managed-environment` :
 **Avec uv :**
 ```bash
 # Vérifier ce qui sera changé (sans modifier)
-uv run black --check py_cli_maker/
+uv run black --check pyfastcli/
 
 # Formater tous les fichiers Python
-uv run black py_cli_maker/ tests/
+uv run black pyfastcli/ tests/
 
 # Formater un fichier spécifique
-uv run black py_cli_maker/cli.py
+uv run black pyfastcli/cli.py
 ```
 
 **Avec pip standard :**
 ```bash
 # Vérifier ce qui sera changé (sans modifier)
-black --check py_cli_maker/
+black --check pyfastcli/
 
 # Formater tous les fichiers Python
-black py_cli_maker/ tests/
+black pyfastcli/ tests/
 
 # Formater un fichier spécifique
-black py_cli_maker/cli.py
+black pyfastcli/cli.py
 ```
 
 #### Configuration
@@ -539,31 +539,31 @@ Pour un formatage automatique à la sauvegarde, configurez votre éditeur (VS Co
 **Avec uv :**
 ```bash
 # Vérifier les erreurs
-uv run ruff check py_cli_maker/ tests/
+uv run ruff check pyfastcli/ tests/
 
 # Corriger automatiquement ce qui peut l'être
-uv run ruff check --fix py_cli_maker/ tests/
+uv run ruff check --fix pyfastcli/ tests/
 
 # Vérifier un fichier spécifique
-uv run ruff check py_cli_maker/cli.py
+uv run ruff check pyfastcli/cli.py
 
 # Formater les imports (remplace isort)
-uv run ruff format py_cli_maker/
+uv run ruff format pyfastcli/
 ```
 
 **Avec pip standard :**
 ```bash
 # Vérifier les erreurs
-ruff check py_cli_maker/ tests/
+ruff check pyfastcli/ tests/
 
 # Corriger automatiquement ce qui peut l'être
-ruff check --fix py_cli_maker/ tests/
+ruff check --fix pyfastcli/ tests/
 
 # Vérifier un fichier spécifique
-ruff check py_cli_maker/cli.py
+ruff check pyfastcli/cli.py
 
 # Formater les imports (remplace isort)
-ruff format py_cli_maker/
+ruff format pyfastcli/
 ```
 
 #### Configuration
@@ -591,25 +591,25 @@ Consultez la [documentation des règles Ruff](https://docs.astral.sh/ruff/rules/
 **Avec uv :**
 ```bash
 # Vérifier les types dans tout le projet
-uv run mypy py_cli_maker/
+uv run mypy pyfastcli/
 
 # Vérifier un fichier spécifique
-uv run mypy py_cli_maker/cli.py
+uv run mypy pyfastcli/cli.py
 
 # Mode strict (recommandé pour les nouveaux projets)
-uv run mypy --strict py_cli_maker/
+uv run mypy --strict pyfastcli/
 ```
 
 **Avec pip standard :**
 ```bash
 # Vérifier les types dans tout le projet
-mypy py_cli_maker/
+mypy pyfastcli/
 
 # Vérifier un fichier spécifique
-mypy py_cli_maker/cli.py
+mypy pyfastcli/cli.py
 
 # Mode strict (recommandé pour les nouveaux projets)
-mypy --strict py_cli_maker/
+mypy --strict pyfastcli/
 ```
 
 #### Configuration
@@ -667,10 +667,10 @@ uv run pytest tests/test_ninja_routes.py::TestSanitizeFuncName
 uv run pytest tests/test_ninja_routes.py::TestSanitizeFuncName::test_simple_name
 
 # Exécuter avec couverture de code
-uv run pytest --cov=py_cli_maker --cov-report=term-missing
+uv run pytest --cov=pyfastcli --cov-report=term-missing
 
 # Générer un rapport HTML de couverture
-uv run pytest --cov=py_cli_maker --cov-report=html
+uv run pytest --cov=pyfastcli --cov-report=html
 # Ouvrir htmlcov/index.html dans votre navigateur
 ```
 
@@ -695,10 +695,10 @@ pytest tests/test_ninja_routes.py::TestSanitizeFuncName
 pytest tests/test_ninja_routes.py::TestSanitizeFuncName::test_simple_name
 
 # Exécuter avec couverture de code
-pytest --cov=py_cli_maker --cov-report=term-missing
+pytest --cov=pyfastcli --cov-report=term-missing
 
 # Générer un rapport HTML de couverture
-pytest --cov=py_cli_maker --cov-report=html
+pytest --cov=pyfastcli --cov-report=html
 # Ouvrir htmlcov/index.html dans votre navigateur
 ```
 
@@ -803,17 +803,17 @@ def test_with_error():
 
 3. **Formater avec Black**
    ```bash
-   uv run black py_cli_maker/ tests/
+   uv run black pyfastcli/ tests/
    ```
 
 4. **Vérifier avec Ruff**
    ```bash
-   uv run ruff check --fix py_cli_maker/ tests/
+   uv run ruff check --fix pyfastcli/ tests/
    ```
 
 5. **Vérifier les types avec Mypy**
    ```bash
-   uv run mypy py_cli_maker/
+   uv run mypy pyfastcli/
    ```
 
 6. **Exécuter les tests**
@@ -823,7 +823,7 @@ def test_with_error():
 
 7. **Vérifier la couverture**
    ```bash
-   uv run pytest --cov=py_cli_maker --cov-report=term-missing
+   uv run pytest --cov=pyfastcli --cov-report=term-missing
    ```
 
 ### Avec pip standard
@@ -835,17 +835,17 @@ def test_with_error():
 
 2. **Formater avec Black**
    ```bash
-   black py_cli_maker/ tests/
+   black pyfastcli/ tests/
    ```
 
 3. **Vérifier avec Ruff**
    ```bash
-   ruff check --fix py_cli_maker/ tests/
+   ruff check --fix pyfastcli/ tests/
    ```
 
 4. **Vérifier les types avec Mypy**
    ```bash
-   mypy py_cli_maker/
+   mypy pyfastcli/
    ```
 
 5. **Exécuter les tests**
@@ -855,7 +855,7 @@ def test_with_error():
 
 6. **Vérifier la couverture**
    ```bash
-   pytest --cov=py_cli_maker --cov-report=term-missing
+   pytest --cov=pyfastcli --cov-report=term-missing
    ```
 
 ##  Utilisation du Makefile
@@ -1002,11 +1002,11 @@ Si vous préférez utiliser les commandes directement :
 
 | Makefile | Commande équivalente (avec uv) | Commande équivalente (avec pip) |
 |----------|--------------------------------|----------------------------------|
-| `make format` | `uv run black py_cli_maker/ tests/` | `black py_cli_maker/ tests/` |
-| `make lint` | `uv run ruff check --fix py_cli_maker/ tests/` | `ruff check --fix py_cli_maker/ tests/` |
-| `make type` | `uv run mypy py_cli_maker/` | `mypy py_cli_maker/` |
+| `make format` | `uv run black pyfastcli/ tests/` | `black pyfastcli/ tests/` |
+| `make lint` | `uv run ruff check --fix pyfastcli/ tests/` | `ruff check --fix pyfastcli/ tests/` |
+| `make type` | `uv run mypy pyfastcli/` | `mypy pyfastcli/` |
 | `make test` | `uv run pytest -v` | `pytest -v` |
-| `make coverage` | `uv run pytest --cov=py_cli_maker --cov-report=html` | `pytest --cov=py_cli_maker --cov-report=html` |
+| `make coverage` | `uv run pytest --cov=pyfastcli --cov-report=html` | `pytest --cov=pyfastcli --cov-report=html` |
 | `make quality` | `uv run black ... && uv run ruff ... && uv run mypy ... && uv run pytest` | `black ... && ruff ... && mypy ... && pytest` |
 
 ## 5. make:model - Génération interactive de modèles Django
@@ -1024,7 +1024,7 @@ Génère un modèle Django avec des champs définis interactivement, similaire �
 ### Génération interactive
 
 ```bash
-py-cli make:model
+pyfastcli make:model
 ```
 
 Le CLI vous posera des questions sur :
@@ -1040,7 +1040,7 @@ Le CLI vous posera des questions sur :
 ### Génération avec options
 
 ```bash
-py-cli make:model \
+pyfastcli make:model \
   --app-name pratique \
   --model-name Pratique \
   --output-dir . \
@@ -1087,7 +1087,7 @@ Choisissez le modèle lié (numéro ou app.Model): 1
 ### Exemple d'utilisation interactive
 
 ```bash
-$ py-cli make:model --app-name blog --model-name Article
+$ pyfastcli make:model --app-name blog --model-name Article
 
 🔍 Recherche des modèles existants...
 ✅ 2 modèle(s) trouvé(s)
@@ -1190,8 +1190,8 @@ Après la génération :
 ##  Structure du projet
 
 ```
-py-cli-maker/
-├── py_cli_maker/          # Code source du package
+pyfastcli/
+├── pyfastcli/          # Code source du package
 │   ├── __init__.py
 │   ├── cli.py             # Interface CLI
 │   └── generators/        # Générateurs

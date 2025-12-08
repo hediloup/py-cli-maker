@@ -1,8 +1,8 @@
-"""Point d'entrée principal de la CLI py-cli-maker."""
+"""Point d'entrée principal de la CLI pyfastcli."""
 
 import click
 
-from py_cli_maker.commands import (
+from pyfastcli.commands import (
     make_domaine,
     make_domaine_ddd,
     make_model,

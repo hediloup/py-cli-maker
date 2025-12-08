@@ -4,7 +4,7 @@ from pathlib import Path
 
 import click
 
-from py_cli_maker.generators.package_generator import generate_package_structure
+from pyfastcli.generators.package_generator import generate_package_structure
 
 
 @click.command("make:package")
@@ -143,7 +143,7 @@ def make_package(
     - Makefile (optionnel)
 
     Exemple d'utilisation:
-        py-cli make:package --project-name my-package --package-name my_package
+        pyfastcli make:package --project-name my-package --package-name my_package
     """
     try:
         # Validation du dossier de sortie

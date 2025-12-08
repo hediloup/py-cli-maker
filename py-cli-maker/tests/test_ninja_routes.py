@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from py_cli_maker.generators.ninja_routes import (
+from pyfastcli.generators.ninja_routes import (
     _escape_string,
     _sanitize_func_name,
     _validate_http_method,

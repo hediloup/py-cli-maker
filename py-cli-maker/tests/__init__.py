@@ -1,1 +1,1 @@
-"""Tests pour py-cli-maker."""
+"""Tests pour pyfastcli."""

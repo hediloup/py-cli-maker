@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from py_cli_maker.generators.package_generator import (
+from pyfastcli.generators.package_generator import (
     _sanitize_package_name,
     _sanitize_project_name,
     _validate_email,

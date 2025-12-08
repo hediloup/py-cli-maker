@@ -4,7 +4,7 @@ from pathlib import Path
 
 import click
 
-from py_cli_maker.generators.ddd_domaine_generator import (
+from pyfastcli.generators.ddd_domaine_generator import (
     generate_ddd_domaine_structure,
 )
 
@@ -65,7 +65,7 @@ def make_domaine_ddd(
     - tests/ (test_models.py, test_services.py, test_views.py)
 
     Exemple d'utilisation:
-        py-cli make:domaine-ddd --app-name pratique --model-name Pratique
+        pyfastcli make:domaine-ddd --app-name pratique --model-name Pratique
     """
     try:
         # Validation du dossier de sortie

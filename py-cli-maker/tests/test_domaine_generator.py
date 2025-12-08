@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from py_cli_maker.generators.domaine_generator import (
+from pyfastcli.generators.domaine_generator import (
     _sanitize_app_name,
     _sanitize_model_name,
     generate_domaine_structure,

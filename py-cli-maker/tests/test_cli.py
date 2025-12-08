@@ -6,7 +6,7 @@ from pathlib import Path
 
 from click.testing import CliRunner
 
-from py_cli_maker.cli import cli
+from pyfastcli.cli import cli
 
 
 class TestCLI:

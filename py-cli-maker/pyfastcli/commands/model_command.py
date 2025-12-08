@@ -5,7 +5,7 @@ from typing import Dict, List, Optional
 
 import click
 
-from py_cli_maker.generators.model_generator import (
+from pyfastcli.generators.model_generator import (
     DJANGO_FIELD_TYPES,
     discover_existing_models,
     generate_model_file,
@@ -189,7 +189,7 @@ def make_model(app_name: str, model_name: str, output_dir: str, no_timestamps: b
     - Génère le code du modèle
 
     Exemple d'utilisation:
-        py-cli make:model --app-name pratique --model-name Pratique
+        pyfastcli make:model --app-name pratique --model-name Pratique
     """
     try:
         output_path = Path(output_dir).resolve()

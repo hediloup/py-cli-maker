@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-from py_cli_maker.generators.domaine_generator import (
+from pyfastcli.generators.domaine_generator import (
     _sanitize_app_name,
     _sanitize_model_name,
 )

@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from py_cli_maker.generators.model_generator import (
+from pyfastcli.generators.model_generator import (
     discover_existing_models,
     generate_model_file,
 )

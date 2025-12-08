@@ -4,7 +4,7 @@ from pathlib import Path
 
 import click
 
-from py_cli_maker.generators.ninja_routes import generate_ninja_route_file
+from pyfastcli.generators.ninja_routes import generate_ninja_route_file
 
 
 @click.command("make:url")
@@ -73,7 +73,8 @@ def make_url(
     Génère un fichier .py contenant une route Django Ninja.
 
     Exemple d'utilisation:
-        py-cli make:url --function-name get_orders --url-path /orders --http-method get
+        pyfastcli make:url --function-name get_orders \\
+            --url-path /orders --http-method get
     """
     try:
         # Validation du dossier de sortie

@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from py_cli_maker.generators.ddd_domaine_generator import (
+from pyfastcli.generators.ddd_domaine_generator import (
     generate_ddd_domaine_structure,
 )
 

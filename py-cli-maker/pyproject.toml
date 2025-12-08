@@ -3,7 +3,7 @@ requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "py-cli-maker"
+name = "pyfastcli"
 version = "0.1.0"
 description = "CLI pour générer des fichiers Python et routes Django Ninja"
 readme = "README.md"
@@ -60,22 +60,24 @@ django-all = [
 
 [project.scripts]
 # Nom de la commande CLI une fois installée
-py-cli = "py_cli_maker.cli:cli"
+pyfastcli = "pyfastcli.cli:cli"
 
 [project.urls]
-Homepage = "https://github.com/hedi/py-cli-maker"
-Repository = "https://github.com/hedi/py-cli-maker"
-Issues = "https://github.com/hedi/py-cli-maker/issues"
+Homepage = "https://github.com/hedi/pyfastcli"
+Repository = "https://github.com/hedi/pyfastcli"
+Issues = "https://github.com/hedi/pyfastcli/issues"
 
-[tool.setuptools]
-packages = ["py_cli_maker"]
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["pyfastcli*"]
+exclude = ["tests*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
-addopts = "-v --cov=py_cli_maker --cov-report=term-missing --cov-report=html"
+addopts = "-v --cov=pyfastcli --cov-report=term-missing --cov-report=html"
 
 [tool.black]
 line-length = 88

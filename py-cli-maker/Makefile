@@ -24,23 +24,23 @@ install-dev:
 
 format:
 	@if command -v uv >/dev/null 2>&1; then \
-		uv run black py_cli_maker/ tests/; \
+		uv run black pyfastcli/ tests/; \
 	else \
-		black py_cli_maker/ tests/; \
+		black pyfastcli/ tests/; \
 	fi
 
 lint:
 	@if command -v uv >/dev/null 2>&1; then \
-		uv run ruff check --fix py_cli_maker/ tests/; \
+		uv run ruff check --fix pyfastcli/ tests/; \
 	else \
-		ruff check --fix py_cli_maker/ tests/; \
+		ruff check --fix pyfastcli/ tests/; \
 	fi
 
 type:
 	@if command -v uv >/dev/null 2>&1; then \
-		uv run mypy py_cli_maker/; \
+		uv run mypy pyfastcli/; \
 	else \
-		mypy py_cli_maker/; \
+		mypy pyfastcli/; \
 	fi
 
 test:
@@ -94,9 +94,9 @@ test-ddd:
 
 coverage:
 	@if command -v uv >/dev/null 2>&1; then \
-		uv run pytest --cov=py_cli_maker --cov-report=term-missing --cov-report=html; \
+		uv run pytest --cov=pyfastcli --cov-report=term-missing --cov-report=html; \
 	else \
-		pytest --cov=py_cli_maker --cov-report=term-missing --cov-report=html; \
+		pytest --cov=pyfastcli --cov-report=term-missing --cov-report=html; \
 	fi
 
 quality: format lint type test

@@ -4,7 +4,7 @@ from pathlib import Path
 
 import click
 
-from py_cli_maker.generators.domaine_generator import generate_domaine_structure
+from pyfastcli.generators.domaine_generator import generate_domaine_structure
 
 
 @click.command("make:domaine")
@@ -65,7 +65,7 @@ def make_domaine(
     - templates/pratique/ (liste.html, detail.html, formulaire.html)
 
     Exemple d'utilisation:
-        py-cli make:domaine --app-name pratique --model-name Pratique
+        pyfastcli make:domaine --app-name pratique --model-name Pratique
     """
     try:
         # Validation du dossier de sortie
