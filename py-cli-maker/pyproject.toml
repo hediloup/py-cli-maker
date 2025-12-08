@@ -63,9 +63,9 @@ django-all = [
 pyfastcli = "pyfastcli.cli:cli"
 
 [project.urls]
-Homepage = "https://github.com/hedi/pyfastcli"
-Repository = "https://github.com/hedi/pyfastcli"
-Issues = "https://github.com/hedi/pyfastcli/issues"
+Homepage = "hhttps://github.com/hediloup/Python-Package-Cli"
+Repository = "https://github.com/hediloup/Python-Package-Cli"
+Issues = "https://github.com/hediloup/Python-Package-Cli/issues"
 
 [tool.setuptools.packages.find]
 where = ["."]
