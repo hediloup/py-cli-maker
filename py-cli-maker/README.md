@@ -12,6 +12,54 @@ CLI pour générer des fichiers Python, routes Django Ninja, packages Python et 
 
 Il pose des questions interactives et génère automatiquement tous les fichiers nécessaires avec du code initialisé.
 
+## Configuration de l'environnement virtuel
+
+Avant d'installer `pyfastcli`, il est recommandé de créer et d'activer un environnement virtuel Python pour isoler les dépendances du projet.
+
+### Création avec venv (méthode standard)
+
+```bash
+# Créer un environnement virtuel
+python -m venv .venv
+
+# Activer l'environnement virtuel
+# Sur Linux/Mac :
+source .venv/bin/activate
+
+# Sur Windows :
+# .venv\Scripts\activate
+```
+
+### Création avec uv (recommandé)
+
+```bash
+# Créer un environnement virtuel
+uv venv
+
+# Activer l'environnement virtuel
+# Sur Linux/Mac :
+source .venv/bin/activate
+
+# Sur Windows :
+# .venv\Scripts\activate
+```
+
+### Vérification
+
+Une fois l'environnement activé, vous devriez voir `(.venv)` au début de votre ligne de commande :
+
+```bash
+(.venv) user@machine:~/projet$
+```
+
+### Désactivation
+
+Pour désactiver l'environnement virtuel :
+
+```bash
+deactivate
+```
+
 ##  Installation
 
 ### Dépendances
@@ -450,6 +498,50 @@ Si vous obtenez l'erreur `externally-managed-environment` avec `uv run pip insta
    # Puis utiliser pip normalement
    pip install -e ".[dev]"
    ```
+
+## 🔧 Dépannage : Erreur "ModuleNotFoundError: No module named 'pyfastcli.commands'"
+
+### Pourquoi cette erreur se produit ?
+
+Si vous obtenez l'erreur `ModuleNotFoundError: No module named 'pyfastcli.commands'` lors de l'exécution de `pyfastcli make:url` ou d'autres commandes, cela signifie que le package a été installé depuis PyPI avec une version incomplète, ou que les modules n'ont pas été correctement inclus lors de l'installation.
+
+### Solution
+
+**Réinstaller le package depuis le code source local :**
+
+```bash
+# Désinstaller la version actuelle
+pip uninstall pyfastcli -y
+
+# Réinstaller depuis le répertoire local en mode développement (recommandé)
+pip install -e /chemin/vers/py-cli-maker
+
+# Ou installer depuis le répertoire local (installation normale)
+pip install /chemin/vers/py-cli-maker
+```
+
+**Exemple concret :**
+
+```bash
+# Si le projet est dans /home/hedi/projects/Python-TP/py-cli-maker
+cd /home/hedi/projects/test2
+source .venv/bin/activate
+pip uninstall pyfastcli -y
+pip install -e /home/hedi/projects/Python-TP/py-cli-maker
+```
+
+**Vérification :**
+
+Après la réinstallation, vérifiez que le module `commands` est présent :
+
+```bash
+# Vérifier le contenu du package installé
+ls -la .venv/lib/python3.12/site-packages/pyfastcli/
+
+# Vous devriez voir les dossiers : commands/, generators/, __init__.py, cli.py
+```
+
+**Note :** L'option `-e` (editable) permet de tester les modifications du code source sans réinstaller à chaque fois. C'est particulièrement utile pour le développement.
 
 ##  Outils de qualité de code pour développeurs
 
