@@ -63,7 +63,7 @@ django-all = [
 pyfastcli = "pyfastcli.cli:cli"
 
 [project.urls]
-Homepage = "hhttps://github.com/hediloup/Python-Package-Cli"
+Homepage = "https://github.com/hediloup/Python-Package-Cli"
 Repository = "https://github.com/hediloup/Python-Package-Cli"
 Issues = "https://github.com/hediloup/Python-Package-Cli/issues"
 
